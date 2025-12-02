@@ -91,3 +91,9 @@ func ReadLinesAsInts(path string) ([]int, error) {
 
 	return out, nil
 }
+
+func SplitByChars(s string, delims string) []string {
+	return strings.FieldsFunc(s, func(r rune) bool {
+		return strings.ContainsRune(delims, r)
+	})
+}
