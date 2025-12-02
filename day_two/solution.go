@@ -4,6 +4,7 @@ import (
 	"AoC25/helper"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func SolveThaThing() {
@@ -56,13 +57,56 @@ func IterateRange(input []string) []int {
 }
 
 func ValidateStringFormat(value string) bool {
-	if len(value)%2 != 0 {
+	value = strings.TrimSpace(value)
+	chars := []rune(value)
+
+	//if single digit it is false
+	if len(chars) < 2 {
 		return false
 	}
-	splitIndex := len(value) / 2
 
-	first := value[:splitIndex]
-	second := value[splitIndex:]
+	//if it is two digits the first needs to be the same as the second
+	if len(chars) == 2 {
+		return chars[0] == chars[1]
+	}
 
-	return first == second
+	//if there are more that two it is possible that they are all the same. If yes its true
+	allSame := true
+	for i := 1; i < len(chars); i++ {
+		if chars[i] != chars[0] {
+			allSame = false
+			break
+		}
+	}
+
+	if allSame {
+		return true
+	}
+
+	//check different batch sizes for pattern repetition
+	for size := 1; size <= len(chars)/2; size++ {
+		// if they cant be split in even chunks there will be no equality
+		if len(chars)%size != 0 {
+			continue
+		}
+
+		isValid := true
+		for offset := size; offset < len(chars); offset += size {
+			for j := 0; j < size; j++ {
+				if chars[j] != chars[offset+j] {
+					isValid = false
+					break
+				}
+			}
+			if !isValid {
+				break
+			}
+		}
+
+		if isValid {
+			return true
+		}
+	}
+
+	return false
 }
