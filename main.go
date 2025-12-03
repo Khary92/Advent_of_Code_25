@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	day_three.SolveThaThing()
+	day_three.SolveThaOtherThing()
 }

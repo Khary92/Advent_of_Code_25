@@ -20,3 +20,20 @@ func SolveThaThing() {
 
 	fmt.Println(count)
 }
+
+func SolveThaOtherThing() {
+	lines, err := helper.ReadLinesAsIntArrays("day_three/input.txt")
+
+	if err != nil {
+		return
+	}
+
+	count := 0
+	for _, line := range lines {
+		battery := RemoveLowestValuesFromFront(line)
+		count += battery.GetThaJoltage()
+		fmt.Println(battery)
+	}
+
+	fmt.Println(count)
+}
