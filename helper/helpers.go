@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -91,25 +92,36 @@ func ReadLinesAsInts(path string) ([]int, error) {
 
 	return out, nil
 }
+func ReadLinesAsIntArrays(path string) ([][]int, error) {
+	lines, err := ReadLines(path)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([][]int, len(lines))
+	for i, l := range lines {
+		if err != nil {
+			return nil, err
+		}
+		out[i], err = StringToIntSlice(l)
+	}
+
+	return out, nil
+}
+
+func StringToIntSlice(s string) ([]int, error) {
+	result := make([]int, len(s))
+	for i, ch := range s {
+		if ch < '0' || ch > '9' {
+			return nil, fmt.Errorf("ungültiges Zeichen: %q", ch)
+		}
+		result[i] = int(ch - '0')
+	}
+	return result, nil
+}
 
 func SplitByChars(s string, delims string) []string {
 	return strings.FieldsFunc(s, func(r rune) bool {
 		return strings.ContainsRune(delims, r)
 	})
-}
-
-func Chunk[T any](items []T, size int) [][]T {
-	if size <= 0 {
-		return nil
-	}
-
-	var chunks [][]T
-	for i := 0; i < len(items); i += size {
-		end := i + size
-		if end > len(items) {
-			end = len(items)
-		}
-		chunks = append(chunks, items[i:end])
-	}
-	return chunks
 }
