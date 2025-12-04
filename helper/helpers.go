@@ -109,6 +109,23 @@ func ReadLinesAsIntArrays(path string) ([][]int, error) {
 	return out, nil
 }
 
+func ReadLinesAsStringArrays(path string) ([][]string, error) {
+	lines, err := ReadLines(path)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([][]string, len(lines))
+	for i, l := range lines {
+		if err != nil {
+			return nil, err
+		}
+		out[i] = StringToSlice(l)
+	}
+
+	return out, nil
+}
+
 func StringToIntSlice(s string) ([]int, error) {
 	result := make([]int, len(s))
 	for i, ch := range s {
@@ -120,8 +137,27 @@ func StringToIntSlice(s string) ([]int, error) {
 	return result, nil
 }
 
+func StringToSlice(s string) []string {
+	result := make([]string, len(s))
+
+	for i, ch := range s {
+		result[i] = string(ch)
+	}
+
+	return result
+}
+
 func SplitByChars(s string, delims string) []string {
 	return strings.FieldsFunc(s, func(r rune) bool {
 		return strings.ContainsRune(delims, r)
 	})
+}
+
+func DeepCopy(field [][]string) [][]string {
+	copyField := make([][]string, len(field))
+	for i := range field {
+		copyField[i] = make([]string, len(field[i]))
+		copy(copyField[i], field[i])
+	}
+	return copyField
 }

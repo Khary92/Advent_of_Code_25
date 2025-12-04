@@ -1,9 +1,9 @@
 package main
 
 import (
-	"AoC25/day_three"
+	"AoC25/day_four"
 )
 
 func main() {
-	day_three.SolveThaOtherThing()
+	day_four.SolveThaThing()
 }
