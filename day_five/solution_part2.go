@@ -1,56 +1,51 @@
 package day_five
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 func SolveThaThingPart2() {
 	_, ranges := SeparateTheThing()
 
-	thaHodler := RangeHolder{}
-	thaHodler.CurrentRanges = ranges
-	thaHodler.NewRanges = ranges
-
-	thaHodler.SomethingRecursiveIGuess()
-}
-
-func (hodler *RangeHolder) SomethingRecursiveIGuess() {
-
-	for {
-		hodler.CurrentRanges = DeepCopy(hodler.NewRanges)
-		hodler.NewRanges = make([]Range, 0)
-
-		for i := 0; i < len(hodler.CurrentRanges); i++ {
-
-			isContainedInAnotherRange := false
-
-			for j := 0; j < len(hodler.CurrentRanges); j++ {
-
-				if i == j {
-					continue
-				}
-
-				if hodler.CurrentRanges[j].ContainsRange(hodler.CurrentRanges[i]) {
-					isContainedInAnotherRange = true
-					break
-				}
-			}
-
-			if !isContainedInAnotherRange {
-				hodler.NewRanges = append(hodler.NewRanges, hodler.CurrentRanges[i])
-			}
-
-			isContainedInAnotherRange = false
+	slices.SortFunc(ranges, func(a, b Range) int {
+		if a.Lower < b.Lower {
+			return -1
+		} else if a.Lower > b.Lower {
+			return 1
 		}
+		return 0
+	})
 
-		if len(hodler.CurrentRanges) == len(hodler.NewRanges) {
-			break
-		}
+	mergedRanges := MergeAthingOrSO(ranges)
 
-		fmt.Printf("Tha fresh count is %d\n", len(hodler.NewRanges))
+	fmt.Println(mergedRanges)
+
+	count := 0
+	for i := 0; i < len(mergedRanges); i++ {
+		mergedRanges[i].CalcRange()
+		count += mergedRanges[i].Size
 	}
+
+	fmt.Println(count)
 }
 
-func DeepCopy(field []Range) []Range {
-	copyField := make([]Range, len(field))
-	copy(copyField, field)
-	return copyField
+func MergeAthingOrSO(ranges []Range) []Range {
+	result := []Range{ranges[0]}
+
+	for i := 1; i < len(ranges); i++ {
+		last := &result[len(result)-1]
+		curr := ranges[i]
+
+		if curr.Lower <= last.Upper {
+			if curr.Upper > last.Upper {
+				last.Upper = curr.Upper
+			}
+			continue
+		}
+
+		result = append(result, curr)
+	}
+
+	return result
 }

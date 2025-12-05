@@ -12,7 +12,7 @@ type RangeHolder struct {
 }
 
 func (rangeValue *Range) CalcRange() {
-	rangeValue.Size = rangeValue.Upper - rangeValue.Lower
+	rangeValue.Size = rangeValue.Upper - rangeValue.Lower + 1
 }
 
 func (rnage *Range) ContainsRange(anotherRnage Range) bool {
