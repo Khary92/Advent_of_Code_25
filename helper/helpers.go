@@ -7,9 +7,9 @@ import (
 	"strings"
 )
 
-func Contains[T comparable](slice []T, val T) bool {
-	for _, v := range slice {
-		if v == val {
+func Contains(list []string, target string) bool {
+	for _, v := range list {
+		if v == target {
 			return true
 		}
 	}
