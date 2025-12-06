@@ -12,7 +12,7 @@ func SolveThaThing() {
 		return
 	}
 
-	resultHodlers := DoStructure(lines)
+	resultHodlers := DoTheRightStructure(lines)
 
 	result := 0
 
