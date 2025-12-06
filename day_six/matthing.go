@@ -45,82 +45,90 @@ func DoStructure(input []string) []MathHolder {
 	return hodlers
 }
 
-func DoTheRightStructure(input []string) []MathHolder {
-	theThing := make([][]string, 0, len(input))
+func DoTheRightStructure(input []string) (hodlers []MathHolder) {
+	// utter crap in this language. This is partly AI generated code as datastructures still are pure garbage to handle without intricate helpers...
+	// The idea is simple.
+	// 1. Make the Lines into a matrix by character
+	// 2. Rotate the matrix 90 degrees to the left
+	// 3. Scan the horizontal lines for the numbers
+	// 4. If it is not a number, nor an empty space, it is the operation
+	// 5. If the line consists of only spaces, the next iteration starts
+
+	theSlicedThang := make([][]string, 0, len(input))
 	for _, value := range input {
-		theThing = append(theThing, helper.SplitByChars(value, " "))
+		theSlicedThang = append(theSlicedThang, helper.StringToSlice(value))
 	}
 
-	hodlers := make([]MathHolder, 0, len(theThing))
-	for i := 0; i < len(theThing[0]); i++ {
-		hodlerValues := make([]string, 0)
-		for j := 0; j < len(theThing); j++ {
-			hodlerValues = append(hodlerValues, theThing[j][i])
+	thaMatrix := RotateTheCrapToTheLEft(theSlicedThang)
+	hodlers = MakeThaHodlersWithThisCrap(thaMatrix)
+
+	return
+}
+
+func MakeThaHodlersWithThisCrap(matrix [][]string) (hodlers []MathHolder) {
+	var currentHodler MathHolder
+
+	for _, row := range matrix {
+		isEmpty := true
+		for _, ch := range row {
+			if ch != " " {
+				isEmpty = false
+				break
+			}
 		}
 
-		GetTheMathHodlerByOtherReadingThing(hodlerValues)
+		if isEmpty {
+			if len(currentHodler.Numbers) > 0 || currentHodler.Operation != "" {
+				hodlers = append(hodlers, currentHodler)
+				currentHodler = MathHolder{}
+			}
+			continue
+		}
+
+		var numStr string
+		for _, ch := range row {
+			if ch >= "0" && ch <= "9" {
+				numStr += ch
+			} else if ch == "+" || ch == "*" {
+				currentHodler.Operation = ch
+			}
+		}
+
+		if numStr != "" {
+			number, err := strconv.Atoi(numStr)
+			if err == nil {
+				currentHodler.Numbers = append(currentHodler.Numbers, number)
+			}
+		}
+	}
+
+	if len(currentHodler.Numbers) > 0 || currentHodler.Operation != "" {
+		hodlers = append(hodlers, currentHodler)
 	}
 
 	return hodlers
 }
 
-func GetTheMathHodlerByOtherReadingThing(input []string) (thaHodler MathHolder) {
-	//get tha longest hodlerValue
-	thaLongestCharsInAValueThing := 0
-	// Dis always the same
-	theYValue := 5
+func RotateTheCrapToTheLEft(matrix [][]string) [][]string {
+	if len(matrix) == 0 {
+		return nil
+	}
+	rows := len(matrix)
+	cols := len(matrix[0])
 
-	for _, value := range input {
-		if len(value) > thaLongestCharsInAValueThing {
-			thaLongestCharsInAValueThing = len(value)
+	rotated := make([][]string, cols)
+	for i := 0; i < cols; i++ {
+		rotated[i] = make([]string, rows)
+		for j := 0; j < rows; j++ {
+			rotated[i][j] = matrix[j][cols-1-i]
 		}
 	}
 
-	thaArray := make([][]string, thaLongestCharsInAValueThing, theYValue)
-	//Initialize the values map liek dis for thaLongestCharsInAValueThing = 4
-	// [2, 3, 4, 5]
-	// [3, 4, 5, -]
-	// [4, 5, -, -]
-	// [5, -, -, -]
-	// [*, -, -, -]
-
-	for i := 0; i < len(input); i++ {
-		chunkifiedNumberOrOperator := helper.StringToSlice(input[i])
-
-		for i := 0; i < thaLongestCharsInAValueThing; i++ {
-			if i >= len(chunkifiedNumberOrOperator) {
-				thaArray[i] = append(thaArray[i], "-")
-				continue
-			}
-
-			thaArray[i] = append(thaArray[i], chunkifiedNumberOrOperator[i])
-		}
-
+	for _, row := range rotated {
+		fmt.Println(row)
 	}
 
-	fmt.Println(thaArray)
-
-	//Great success in some way i guess
-	//Now read the stuff and make cool hodler
-
-	for i := 0; i < len(thaArray); i++ {
-		aTheStringValue := ""
-		for j := 0; j < len(thaArray[i]); j++ {
-			if thaArray[i][j] == "-" {
-				continue
-			}
-
-			if j == len(thaArray[i])-1 && thaArray[i][j] != "-" {
-				thaHodler.Operation = thaArray[i][j]
-				continue
-			}
-
-			aTheStringValue += thaArray[i][j]
-		}
-		thaNumber, _ := strconv.Atoi(aTheStringValue)
-		thaHodler.Numbers = append(thaHodler.Numbers, thaNumber)
-	}
-	return
+	return rotated
 }
 
 func (hodler *MathHolder) DoTheMath() {
